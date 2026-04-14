@@ -8,12 +8,14 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [audioUrl, setAudioUrl] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [statusText, setStatusText] = useState("Generating Audio...");
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
 
   const handleSubmit = async () => {
-    //officially loading
     setIsProcessing(true);
-    setProgress(15); // to make loading bar at 15%
+    setAudioUrl(null);
+    setProgress(15);
+    setStatusText("Adding to queue...");
 
     try {
       //Using Axios to send a POST request with English string 
@@ -24,7 +26,6 @@ function App() {
       pollStatus(taskId);
 
       console.log("Success! Backend queued task #", taskId);
-
 
     } catch (error) {
       console.error("API Error:", error);
@@ -44,13 +45,22 @@ function App() {
         const myTask = allTasks.find((t) => t.id === taskId);
 
         if (myTask) {
-          // If the worker is currently processing it
-          if (myTask.status === "processing") {
+          if (myTask.status === "pending") {
+            const pendingTasks = allTasks.filter(t => t.status === "pending" || t.status === "processing").sort((a,b)=>a.id-b.id);
+            const myIndex = pendingTasks.findIndex(t => t.id === taskId);
+            
+            // If there's literally a task before ours processing/queued!
+            if (myIndex > 0) {
+              setStatusText(`Another request is being processed. You are queued (Position: ${myIndex}). Please wait...`);
+            } else {
+              setStatusText("You are next in queue...");
+            }
+          } else if (myTask.status === "processing") {
             setProgress(65);
-          }
-          // If the worker completely finished!
-          else if (myTask.status === "completed") {
+            setStatusText("Processing text and generating audio...");
+          } else if (myTask.status === "completed") {
             setProgress(100);
+            setStatusText("Audio Complete!");
             setAudioUrl(myTask.audio_url); // audio link
             setIsProcessing(false);        // Stop the loading spinner
             clearInterval(interval);       // stop the 2-second clock
@@ -130,9 +140,9 @@ function App() {
 
               <button
                 onClick={handleSubmit}
-                disabled={!text.trim() || wordCount > 100}
-                className="w-full mt-6 bg-[#8B5CF6] hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-full transition-all">
-                Convert to Hindi Speech
+                disabled={!text.trim() || wordCount > 100 || isProcessing}
+                className="w-full mt-6 bg-[#8B5CF6] hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-3.5 rounded-full transition-all flex items-center justify-center gap-2">
+                {isProcessing ? "Adding to Queue..." : "Convert to Hindi Speech"}
               </button>
             </div>
 
@@ -143,9 +153,9 @@ function App() {
             <div className="relative mt-8 w-[600px] animate-[slide-up_0.5s_ease-out]">
               <div className="relative bg-white/50 backdrop-blur-xl shadow-xl rounded-3xl p-6 border border-white/60">
                 <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
-                  {audioUrl ? "✨ Audio Complete!" : "🔄 Generating Audio..."}
+                  {audioUrl ? "✨ " : "🔄 "} {statusText}
                 </h3>
-                
+
                 {/* Progress Bar (Hides when audio is complete) */}
                 {!audioUrl && (
                   <div className="w-full bg-white/60 rounded-full h-3 mb-2 overflow-hidden shadow-inner border border-white/40">
