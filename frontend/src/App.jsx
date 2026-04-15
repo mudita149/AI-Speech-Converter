@@ -8,7 +8,7 @@ function App() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [progress, setProgress] = useState(0);
   const [statusText, setStatusText] = useState("Generating Audio...");
-  
+
   // Voice state
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
@@ -35,7 +35,7 @@ function App() {
     recognition.lang = 'en-US';
 
     recognition.onstart = () => setIsListening(true);
-    
+
     // Keep track of what was already in the textbox
     let finalTranscript = text ? text + " " : "";
 
@@ -96,9 +96,9 @@ function App() {
 
         if (myTask) {
           if (myTask.status === "pending") {
-            const pendingTasks = allTasks.filter(t => t.status === "pending" || t.status === "processing").sort((a,b)=>a.id-b.id);
+            const pendingTasks = allTasks.filter(t => t.status === "pending" || t.status === "processing").sort((a, b) => a.id - b.id);
             const myIndex = pendingTasks.findIndex(t => t.id === taskId);
-            
+
             if (myIndex > 0) {
               setStatusText(`Another request is being processed. You are queued (Position: ${myIndex}). Please wait...`);
             } else {
@@ -146,7 +146,7 @@ function App() {
           {/* AI PILL */}
           <div className="mt-8 mb-6 flex items-center gap-1.5 bg-[#E9E4FC] text-[#8B5CF6] px-4 py-1.5 rounded-full text-[13px] font-semibold border border-white/50 shadow-sm">
             <Sparkles className="w-4 h-4 text-orange-400" />
-            <span>Powered by AI Voice Translation</span>
+            <span>Powered by AI</span>
           </div>
 
           <h1 className="text-5xl font-extrabold text-slate-800 text-center">
@@ -166,15 +166,14 @@ function App() {
 
             <div className="relative bg-white/50 backdrop-blur-3xl shadow-2xl rounded-3xl p-8 border border-white/80">
               <div className="bg-white/60 backdrop-blur-md rounded-xl p-4 border border-white shadow-inner relative">
-                
+
                 {/* Voice Input Button */}
-                <button 
+                <button
                   onClick={toggleListening}
-                  className={`absolute bottom-4 right-4 p-2.5 rounded-full transition-all shadow-md flex items-center gap-2 border ${
-                    isListening 
-                      ? 'bg-red-500 text-white border-red-400 animate-pulse' 
+                  className={`absolute bottom-4 right-4 p-2.5 rounded-full transition-all shadow-md flex items-center gap-2 border ${isListening
+                      ? 'bg-red-500 text-white border-red-400 animate-pulse'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-[#F3E8FF] hover:text-[#8B5CF6] hover:border-[#8B5CF6]/30'
-                  }`}
+                    }`}
                   title="Voice Input"
                 >
                   {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -187,7 +186,7 @@ function App() {
                   placeholder="Type your English text here or click the microphone to speak..."
                   className="w-full bg-transparent text-lg resize-none outline-none text-slate-700 min-h-[120px] pb-10"
                 />
-                
+
                 {/* Word Counter */}
                 <div className="flex justify-start mt-2">
                   <span className={`text-sm font-semibold ${wordCount > 100 ? 'text-red-500' : 'text-[#8B5CF6]/60'}`}>
