@@ -13,6 +13,7 @@
   "dependencies": {
     "@google-cloud/translate": "^9.3.0",
     "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "google-translate-api-x": "^10.7.2",
     "google-tts-api": "^2.0.2",

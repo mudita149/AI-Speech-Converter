@@ -2,6 +2,8 @@ import { useState, useRef } from "react";
 import axios from "axios";
 import { Sparkles, Mic, MicOff } from "lucide-react";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+
 function App() {
   const [text, setText] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -77,7 +79,7 @@ function App() {
     setStatusText("Adding to queue...");
 
     try {
-      const response = await axios.post("/requests", { english_text: text });
+      const response = await axios.post(`${API_URL}/requests`, { english_text: text });
       const taskId = response.data.data.id;
       pollStatus(taskId);
       console.log("Success! Backend queued task #", taskId);
@@ -90,7 +92,7 @@ function App() {
   const pollStatus = async (taskId) => {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get("/requests");
+        const res = await axios.get(`${API_URL}/requests`);
         const allTasks = res.data;
         const myTask = allTasks.find((t) => t.id === taskId);
 
