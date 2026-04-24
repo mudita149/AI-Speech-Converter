@@ -1,15 +1,12 @@
 const { Pool } = require("pg");
 require("dotenv").config();
 
-const isProduction = process.env.NODE_ENV === "production";
-
-// For local testing, fallback to the local object config.
-// Render will supply the continuous process.env.DATABASE_URL
+// If DATABASE_URL is provided by Render, always use SSL
 const pool = new Pool(
   process.env.DATABASE_URL 
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: isProduction ? { rejectUnauthorized: false } : false
+        ssl: { rejectUnauthorized: false }
       }
     : {
         user: "postgres",
@@ -19,5 +16,24 @@ const pool = new Pool(
         port: 5432,
       }
 );
+
+// Automatically create the table if it doesn't exist
+(async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS requests (
+        id SERIAL PRIMARY KEY,
+        english_text TEXT NOT NULL,
+        hindi_text TEXT,
+        audio_url TEXT,
+        status VARCHAR(50) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log("Database table verified/created successfully.");
+  } catch (error) {
+    console.error("Error creating database table:", error);
+  }
+})();
 
 module.exports = pool;
