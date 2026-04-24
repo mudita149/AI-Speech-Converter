@@ -22,3 +22,5 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
+// Start the background worker process
+require('./worker.js');

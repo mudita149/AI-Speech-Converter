@@ -173,8 +173,8 @@ function App() {
                 <button
                   onClick={toggleListening}
                   className={`absolute bottom-4 right-4 p-2.5 rounded-full transition-all shadow-md flex items-center gap-2 border ${isListening
-                      ? 'bg-red-500 text-white border-red-400 animate-pulse'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-[#F3E8FF] hover:text-[#8B5CF6] hover:border-[#8B5CF6]/30'
+                    ? 'bg-red-500 text-white border-red-400 animate-pulse'
+                    : 'bg-white text-slate-600 border-slate-200 hover:bg-[#F3E8FF] hover:text-[#8B5CF6] hover:border-[#8B5CF6]/30'
                     }`}
                   title="Voice Input"
                 >
