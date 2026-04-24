@@ -17,6 +17,17 @@ app.get("/health", (req, res) => {
     res.send("Server is running");
 });
 
+app.get("/db-test", async (req, res) => {
+    const pool = require("./config/db");
+    try {
+        const client = await pool.connect();
+        client.release();
+        res.status(200).json({ status: "Success", message: "Connected to DB" });
+    } catch (err) {
+        res.status(500).json({ status: "Failed", error: err.message, code: err.code });
+    }
+});
+
 const port = process.env.PORT || 3001;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
